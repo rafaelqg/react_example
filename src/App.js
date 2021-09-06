@@ -1,25 +1,21 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import NavigationBar from './NavigationBar';
 
 function App() {
+  const accountTypes=["Bronze", "Silver", "Gold"];
+  const listItems = accountTypes.map((d) => <li key={d}>{d}</li>);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>=== ReactJS APP ===</h1>
+      <NavigationBar username="Rafael Q. Gonçalves"></NavigationBar>
+      <br />
+      <ul>
+      {listItems}
+      </ul>
     </div>
   );
 }
 
 export default App;
+
