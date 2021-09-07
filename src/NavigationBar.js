@@ -6,8 +6,9 @@ class NavigationBar extends React.Component {
         this.state = {
             login: '',
             password:'',
-            userId: null,
-            showCreateNewAccount:false
+            currentUser: null,
+            showCreateNewAccount:false,
+            users:[]
         };
         //bind all form fields with change handler
         this.handleChangeLogin = this.handleChangeLogin.bind(this);
@@ -20,13 +21,14 @@ class NavigationBar extends React.Component {
         this.addAccountCallback=this.addAccountCallback.bind(this);
 
         //React AJAX
+        /*
         let promise=window.fetch("http://127.0.0.1:5500/messages.json",{ method: 'GET'});
         promise.then(response => {
             response.json().then(data=>{
                 console.log("Data",data);
             });       
         });
-
+        */
         
     }
 
@@ -42,32 +44,40 @@ class NavigationBar extends React.Component {
 
     addAccountCallback(params){
         console.log("Children", params);
-    }
-
-    login(){
-        let mockUserName="admin";
-        let mockPassword="123";
-
-        if(this.state.login===mockUserName && this.state.password===mockPassword){
-            window.alert("Credentials accepted. Redirecting...");
-            this.setState({userId: 1});//setState automatically refresh component on screen
-        }else{
-            window.alert("Invalid credentials.");
+        let users=this.state.users;
+        if(params.login!=""){
+            users.push({"login":params.login, "password":params.password, showCreateNewAccount:false});
+            this.setState({"users":users});
         }
     }
 
+    login(){       
+        let i=0;
+        let found=false;
+        while (i<this.state.users.length && !found){
+            if(this.state.login===this.state.users[i].login && this.state.password===this.state.users[i].password){
+                found=true;
+                window.alert("Credentials accepted. Redirecting...");    
+                this.setState({currentUser: this.state.users[i].login});//setState automatically refresh component on screen        
+            }
+            i++;
+        }
+        if(!found) window.alert("Invalid credentials.");
+    }
+
     logout(){
-        this.setState({userId: null});
+        this.setState({currentUser: null,showCreateNewAccount: false});
     }
     createAccount(){
         this.setState({showCreateNewAccount: true});
     }
 
     render() {
-       let userId=this.state.userId;
-       if(userId==null){
+       if(this.state.currentUser==null){
+        const usersList= this.state.users.map((user) => <li key={user.login}>{user.login}</li>);
         return(
             <div>
+                <h2>{this.props.appdescription}</h2>
                 Login: <input type="text" value={this.state.login} onChange={this.handleChangeLogin} placeholder="login" />
                 Password:<input type="password" value={this.state.password} onChange={this.handleChangePassword} placeholder="password" />
                 <input type="button" value="Enter" onClick={this.login} />
@@ -76,12 +86,16 @@ class NavigationBar extends React.Component {
                 <br />
                 <hr />
                 <NewUserAccount show={this.state.showCreateNewAccount} callback={this.addAccountCallback}></NewUserAccount>
+                <h2>Users registered:</h2>
+                <ul>
+                    {usersList}
+                </ul>
             </div>
         );
        }else{
             return(
                 <div>
-                    Hello: {this.props.username}
+                    Hello: {this.state.currentUser}
                     | <input type="button" value="Logout" onClick={this.logout} />
                     <br/>
                     <hr />

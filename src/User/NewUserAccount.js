@@ -40,13 +40,16 @@ class NewUserAccount extends React.Component {
 
 
     createAccount(){
-        this.state.parentCallback(this.state);
+        window.alert("User registered!");
         this.setState({show:false});
+        this.state.parentCallback(this.state);
+        
         
     }
 
     cancel(){
         this.setState({show:false});
+        this.state.parentCallback(this.state);
     }
 
     render() {
